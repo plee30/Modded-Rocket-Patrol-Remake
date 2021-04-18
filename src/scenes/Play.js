@@ -17,6 +17,7 @@ class Play extends Phaser.Scene {
         this.load.spritesheet('explosion', 'assets/explosion.png', {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame: 9});
         this.load.spritesheet('dog', 'assets/Dog_Frames/spritesheet.png', {frameWidth: 62, frameHeight: 44, startFrame: 0, endFrame: 3});
         this.load.spritesheet('catch', 'assets/Dog_Frames/caught_sheet.png', {frameWidth: 62, frameHeight: 44, startFrame: 0, endFrame: 3});
+        this.load.spritesheet('bird', 'assets/bird.png', {frameWidth: 51, frameHeight: 21, startFrame: 0, endFrame: 1});
     }
 
     create() {
@@ -38,6 +39,8 @@ class Play extends Phaser.Scene {
         this.ship01 = new Spaceship(this, game.config.width + borderUISize*6, borderUISize*4, 'dog', 0, 30).setOrigin(0, 0);
         this.ship02 = new Spaceship(this, game.config.width + borderUISize*3, borderUISize*5 + borderPadding*2, 'dog', 0, 20).setOrigin(0,0);
         this.ship03 = new Spaceship(this, game.config.width, borderUISize*6 + borderPadding*4, 'dog', 0, 10).setOrigin(0,0);
+
+        this.bird01 = new Bird(this, game.config.width, borderUISize*3 + borderPadding*5 + borderPadding*2 - 120, 'bird', 0, 100).setOrigin(0,0);
 
         // green UI background
         //this.add.rectangle(0, borderUISize + borderPadding, game.config.width, borderUISize * 2, 0x00FF00).setOrigin(0, 0);
@@ -77,10 +80,19 @@ class Play extends Phaser.Scene {
             frameRate: 30
         });
 
+        // animation config
+        this.anims.create({
+            key: 'flying',
+            frames: this.anims.generateFrameNumbers('bird', { start: 0, end: 1, first:0}),
+            repeat: -1,
+            frameRate: 7
+        });
+
         // Play Dog Walking Animation
         this.ship01.play('walking');
         this.ship02.play('walking');
         this.ship03.play('walking');
+        this.bird01.play('flying');
 
         // initalize score
         this.p1Score = 0;
@@ -134,6 +146,7 @@ class Play extends Phaser.Scene {
             this.ship01.update();    // update spaceship x3
             this.ship02.update();
             this.ship03.update();
+            this.bird01.update();
         }
 
 
@@ -149,6 +162,10 @@ class Play extends Phaser.Scene {
         if (this.checkCollision(this.p1Rocket, this.ship01)) {
             this.p1Rocket.reset();
             this.shipExplode(this.ship01);
+        }
+        if (this.checkCollision(this.p1Rocket, this.bird01)) {
+            this.p1Rocket.reset();
+            this.birdHit(this.bird01);
         }
     }
     
@@ -179,5 +196,25 @@ class Play extends Phaser.Scene {
         this.p1Score += ship.points;
         this.scoreLeft.text = this.p1Score;
         this.sound.play('sfx_bark', {volume: 0.8});
+    }
+
+    birdHit(bird) {
+        //temporarily hide ship
+        bird.alpha = 0;
+        // create explosion sprite at ship's position
+        /*
+        let boom = this.add.sprite(bird.x, bird.y, 'catch').setOrigin(0, 0);
+        boom.anims.play('caught');              // play explode animation
+        boom.on('animationcomplete', () => {     // callback after anim completes
+            bird.reset();                        // reset ship position
+            bird.alpha = 1;                      // make ship visible again
+            boom.destroy();                      // remove explosion sprite
+        });*/
+        this.sound.play('sfx_bird', {volume: 0.5});
+        bird.reset();
+        bird.alpha = 1;
+        // score add and repaint
+        this.p1Score += bird.points;
+        this.scoreLeft.text = this.p1Score;
     }
 }

@@ -8,6 +8,8 @@ class Menu extends Phaser.Scene {
         this.load.audio('sfx_select', 'assets/blip_select12.wav');
         this.load.audio('sfx_bark', 'assets/bark.wav');
         this.load.audio('sfx_ball', 'assets/throw.wav');
+        this.load.audio('sfx_bird', 'assets/squawk.wav');
+
 
         this.load.image('menu', 'assets/menu.png');
     }
