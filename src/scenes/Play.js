@@ -40,13 +40,13 @@ class Play extends Phaser.Scene {
         this.ship03 = new Spaceship(this, game.config.width, borderUISize*6 + borderPadding*4, 'dog', 0, 10).setOrigin(0,0);
 
         // green UI background
-        this.add.rectangle(0, borderUISize + borderPadding, game.config.width, borderUISize * 2, 0x00FF00).setOrigin(0, 0);
+        //this.add.rectangle(0, borderUISize + borderPadding, game.config.width, borderUISize * 2, 0x00FF00).setOrigin(0, 0);
 
         // white borders
-        this.add.rectangle(0, 0, game.config.width, borderUISize, 0xFFFFFF).setOrigin(0 ,0);
-        this.add.rectangle(0, game.config.height - borderUISize, game.config.width, borderUISize, 0xFFFFFF).setOrigin(0 ,0);
-        this.add.rectangle(0, 0, borderUISize, game.config.height, 0xFFFFFF).setOrigin(0 ,0);
-        this.add.rectangle(game.config.width - borderUISize, 0, borderUISize, game.config.height, 0xFFFFFF).setOrigin(0 ,0);
+        this.add.rectangle(0, 0, game.config.width, borderUISize, 0xF3AC5E).setOrigin(0 ,0);
+        this.add.rectangle(0, game.config.height - borderUISize, game.config.width, borderUISize, 0xF3AC5E).setOrigin(0 ,0);
+        this.add.rectangle(0, 0, borderUISize, game.config.height, 0xF3AC5E).setOrigin(0 ,0);
+        this.add.rectangle(game.config.width - borderUISize, 0, borderUISize, game.config.height, 0xF3AC5E).setOrigin(0 ,0);
 
         // define keys
         keyF = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F);
@@ -87,7 +87,7 @@ class Play extends Phaser.Scene {
 
         // display score
         let scoreConfig = {
-            fontFamily: 'Courier',
+            fontFamily: 'Verdana',
             fontSize: '28px',
             backgroundColor: '#F3B141',
             color: '#843605',
@@ -95,6 +95,7 @@ class Play extends Phaser.Scene {
             padding: {
             top: 5,
             bottom: 5,
+            right: 5,
             },
             fixedWidth: 100
         }
@@ -121,11 +122,11 @@ class Play extends Phaser.Scene {
             this.scene.start("menuScene");
         }
         
-        this.field1.tilePositionX -= 4;
-        this.field2.tilePositionX -= 3.5;
-        this.field3.tilePositionX -= 3;
-        this.field4.tilePositionX -= 2.5;
-        this.field5.tilePositionX -= 0.5;
+        this.field1.tilePositionX -= game.settings.spaceshipSpeed;
+        this.field2.tilePositionX -= game.settings.spaceshipSpeed - 0.5;
+        this.field3.tilePositionX -= game.settings.spaceshipSpeed - 1;
+        this.field4.tilePositionX -= game.settings.spaceshipSpeed - 1.5;
+        this.field5.tilePositionX -= game.settings.spaceshipSpeed - 2.5;
 
 
         if (!this.gameOver) {
@@ -177,6 +178,6 @@ class Play extends Phaser.Scene {
         // score add and repaint
         this.p1Score += ship.points;
         this.scoreLeft.text = this.p1Score;
-        this.sound.play('sfx_explosion', {volume: 0.5});
+        this.sound.play('sfx_bark', {volume: 0.8});
     }
 }
