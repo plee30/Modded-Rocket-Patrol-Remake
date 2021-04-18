@@ -4,12 +4,19 @@ class Play extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('rocket', 'assets/rocket.png');
+        this.load.image('rocket', 'assets/ball.png');
         this.load.image('spaceship', 'assets/spaceship.png');
         this.load.image('starfield', 'assets/starfield.png');
+        this.load.image('field-1', 'assets/field1.png');
+        this.load.image('field-2', 'assets/field2.png');
+        this.load.image('field-3', 'assets/field3.png');
+        this.load.image('field-4', 'assets/field4.png');
+        this.load.image('field-5', 'assets/field5.png');
 
         // load explosion spritesheet
         this.load.spritesheet('explosion', 'assets/explosion.png', {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame: 9});
+        this.load.spritesheet('dog', 'assets/Dog_Frames/spritesheet.png', {frameWidth: 62, frameHeight: 44, startFrame: 0, endFrame: 3});
+        this.load.spritesheet('catch', 'assets/Dog_Frames/caught_sheet.png', {frameWidth: 62, frameHeight: 44, startFrame: 0, endFrame: 3});
     }
 
     create() {
@@ -17,13 +24,20 @@ class Play extends Phaser.Scene {
         // starfield background
         this.starfield = this.add.tileSprite(0, 0, 640, 480, 'starfield').setOrigin(0, 0);
 
+        // field background
+        this.field1 = this.add.tileSprite(0, 0, 640, 480, 'field-1').setOrigin(0,0);
+        this.field2 = this.add.tileSprite(0, 0, 640, 480, 'field-2').setOrigin(0,0);
+        this.field3 = this.add.tileSprite(0, 0, 640, 480, 'field-3').setOrigin(0,0);
+        this.field4 = this.add.tileSprite(0, 0, 640, 480, 'field-4').setOrigin(0,0);
+        this.field5 = this.add.tileSprite(0, 0, 640, 480, 'field-5').setOrigin(0,0);
+
         // add rocket (p1)
         this.p1Rocket = new Rocket(this, game.config.width/2, game.config.height - borderUISize - borderPadding, 'rocket').setOrigin(0.5, 0);
 
         // add spaceships (x3)
-        this.ship01 = new Spaceship(this, game.config.width + borderUISize*6, borderUISize*4, 'spaceship', 0, 30).setOrigin(0, 0);
-        this.ship02 = new Spaceship(this, game.config.width + borderUISize*3, borderUISize*5 + borderPadding*2, 'spaceship', 0, 20).setOrigin(0,0);
-        this.ship03 = new Spaceship(this, game.config.width, borderUISize*6 + borderPadding*4, 'spaceship', 0, 10).setOrigin(0,0);
+        this.ship01 = new Spaceship(this, game.config.width + borderUISize*6, borderUISize*4, 'dog', 0, 30).setOrigin(0, 0);
+        this.ship02 = new Spaceship(this, game.config.width + borderUISize*3, borderUISize*5 + borderPadding*2, 'dog', 0, 20).setOrigin(0,0);
+        this.ship03 = new Spaceship(this, game.config.width, borderUISize*6 + borderPadding*4, 'dog', 0, 10).setOrigin(0,0);
 
         // green UI background
         this.add.rectangle(0, borderUISize + borderPadding, game.config.width, borderUISize * 2, 0x00FF00).setOrigin(0, 0);
@@ -46,6 +60,27 @@ class Play extends Phaser.Scene {
             frames: this.anims.generateFrameNumbers('explosion', { start: 0, end: 9, first:0}),
             frameRate: 30
         });
+
+        // animation config
+        this.anims.create({
+            key: 'walking',
+            frames: this.anims.generateFrameNumbers('dog', { start: 0, end: 3, first:0}),
+            repeat: -1,
+            frameRate: 20
+        });
+
+        // animation config
+        this.anims.create({
+            key: 'caught',
+            frames: this.anims.generateFrameNumbers('catch', { start: 0, end: 3, first:0}),
+            repeat: 4,
+            frameRate: 30
+        });
+
+        // Play Dog Walking Animation
+        this.ship01.play('walking');
+        this.ship02.play('walking');
+        this.ship03.play('walking');
 
         // initalize score
         this.p1Score = 0;
@@ -86,7 +121,13 @@ class Play extends Phaser.Scene {
             this.scene.start("menuScene");
         }
         
-        this.starfield.tilePositionX -= 4;
+        this.field1.tilePositionX -= 4;
+        this.field2.tilePositionX -= 3.5;
+        this.field3.tilePositionX -= 3;
+        this.field4.tilePositionX -= 2.5;
+        this.field5.tilePositionX -= 0.5;
+
+
         if (!this.gameOver) {
             this.p1Rocket.update();  // update rocket sprite
             this.ship01.update();    // update spaceship x3
@@ -126,8 +167,8 @@ class Play extends Phaser.Scene {
         //temporarily hide ship
         ship.alpha = 0;
         // create explosion sprite at ship's position
-        let boom = this.add.sprite(ship.x, ship.y, 'explosion').setOrigin(0, 0);
-        boom.anims.play('explode');              // play explode animation
+        let boom = this.add.sprite(ship.x, ship.y, 'catch').setOrigin(0, 0);
+        boom.anims.play('caught');              // play explode animation
         boom.on('animationcomplete', () => {     // callback after anim completes
             ship.reset();                        // reset ship position
             ship.alpha = 1;                      // make ship visible again
