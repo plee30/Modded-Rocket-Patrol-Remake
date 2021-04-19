@@ -5,8 +5,6 @@ class Play extends Phaser.Scene {
 
     preload() {
         this.load.image('rocket', 'assets/Ball.png');
-        this.load.image('spaceship', 'assets/spaceship.png');
-        this.load.image('starfield', 'assets/starfield.png');
         this.load.image('field-1', 'assets/field1.png');
         this.load.image('field-2', 'assets/field2.png');
         this.load.image('field-3', 'assets/field3.png');
@@ -101,13 +99,14 @@ class Play extends Phaser.Scene {
         let scoreConfig = {
             fontFamily: 'Verdana',
             fontSize: '28px',
-            backgroundColor: '#F3B141',
-            color: '#843605',
+            backgroundColor: '#F3AC5E',
+            color: '#000000',
             align: 'right',
             padding: {
             top: 5,
             bottom: 5,
             right: 5,
+            left: 5,
             },
             fixedWidth: 100
         }
@@ -120,6 +119,8 @@ class Play extends Phaser.Scene {
         scoreConfig.fixedWidth = 0;
         this.clock = this.time.delayedCall(game.settings.gameTimer, () => {
             this.add.text(game.config.width/2, game.config.height/2, 'GAME OVER', scoreConfig).setOrigin(0.5);
+            scoreConfig.backgroundColor = '#FFFFFF';
+            scoreConfig.color = '#000000';
             this.add.text(game.config.width/2, game.config.height/2 + 64, 'Press (R) to Restart or <- for Menu', scoreConfig).setOrigin(0.5);
             this.gameOver = true;
         }, null, this);
@@ -201,18 +202,12 @@ class Play extends Phaser.Scene {
     birdHit(bird) {
         //temporarily hide ship
         bird.alpha = 0;
-        // create explosion sprite at ship's position
-        /*
-        let boom = this.add.sprite(bird.x, bird.y, 'catch').setOrigin(0, 0);
-        boom.anims.play('caught');              // play explode animation
-        boom.on('animationcomplete', () => {     // callback after anim completes
-            bird.reset();                        // reset ship position
-            bird.alpha = 1;                      // make ship visible again
-            boom.destroy();                      // remove explosion sprite
-        });*/
         this.sound.play('sfx_bird', {volume: 0.5});
-        bird.reset();
-        bird.alpha = 1;
+        setTimeout(() => { 
+            bird.reset(); 
+            bird.alpha = 1;
+        }, 2000);
+
         // score add and repaint
         this.p1Score += bird.points;
         this.scoreLeft.text = this.p1Score;
